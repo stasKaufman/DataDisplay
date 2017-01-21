@@ -1,12 +1,35 @@
 .margin {
-    margin-top: 65px;
-    width: 70%;
+    margin-top: 10px !important;
+    width: 100%;
     margin: auto;
 
 }
 
+.form-control {
+    width: 185px;
+    height: 23px;
+    display: inline;
+
+}
+
+span {
+    margin-left: 4px;
+}
+
+.btn-success.btn-sm {
+    margin-left: 4px;
+}
+
+input {
+    margin-left: 2px;
+}
+
 /*caption {*/
     /*font-size: 1.5em;*/
+/*}*/
+
+/*.margin_left {*/
+    /*margin-left: 2px;*/
 /*}*/
 
 td {
