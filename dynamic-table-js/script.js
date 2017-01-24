@@ -1,110 +1,177 @@
 function createBasicTable() {
 
-    var objData = JSON.parse(tableData);
+    var objData = tableData;
     var holdElement;
 
-    holdElement = createAppendSet("div", document.getElementsByClassName('container')[0], "row");
-    holdElement = createAppendSet("div", holdElement, "col-md-12");
-    holdElement = createAppendSet("table", holdElement, "table table-bordered table-striped margin");
-    holdElement = createAppendSet("tbody", holdElement, null);
+    //create the containers
+    holdElement = createDiv(document.getElementsByClassName('container')[0], "row");
+    holdElement = createDiv(holdElement, "col-md-3");
 
-    var array = objData.table;
+    //create form
+    holdElement = createForm(holdElement, "form-horizontal");
+    var arrayInput = ["FirstName :", "LastName :", "Age :"];
+    var j;
+    for (j = 0; j < arrayInput.length; j++) {
+        holdElement = createDiv(document.getElementsByTagName("form")[0], "form-group");
+        holdElement = createLabel(holdElement, "control-label");
+        text = document.createTextNode(arrayInput[j]);
+        holdElement.appendChild(text);
+        holdElement = createInput(document.getElementsByClassName("form-group")[j], "text", "form-control")
+    }
 
+    //create submit button
+    holdElement = createDiv(document.getElementsByTagName("form")[0], "form-group");
+    holdElement = createButton(holdElement, "btn btn-default");
+    text = document.createTextNode("ADD");
+    holdElement.appendChild(text);
+    holdElement.addEventListener("click", addButton);
+
+    //create table containers
+    holdElement = createDiv(document.getElementsByClassName("row")[0], "col-md-9");
+    holdElement = createTable("table", holdElement, "table table-bordered table-striped margin");
+    holdElement = createTable("tbody", holdElement, null);
+
+    var arrayData = objData.table;
+
+    //create tableHeaders
     var i;
-    for (i = 0; i < array.length; i++) {
-
+    for (i = 0; i < arrayData.length; i++) {
         if (i == 0) {
-            holdElement = createAppendSet("tr", holdElement, null);
-
-            holdElement = createAppendSet("th", holdElement, null);
+            holdElement = createRow(holdElement);
+            holdElement = createTableHeader(holdElement);
             var text = document.createTextNode("Functionally");
             holdElement.appendChild(text);
 
-            var currElement = array[0];
+            var firstObj = arrayData[0];
             var headerData;
-            for (headerData in currElement) {
-
-                var header = document.createElement("TH");
-                document.getElementsByTagName("tr")[0].appendChild(header);
+            for (headerData in firstObj) {
+                holdElement = createTableHeader(document.getElementsByTagName("tr")[0]);
                 text = document.createTextNode(headerData);
-                header.appendChild(text);
+                holdElement.appendChild(text);
             }
         }
-
-        holdElement = createAppendSet("tr", document.getElementsByTagName("tbody")[0], null);
-        holdElement = createAppendSet("td", holdElement, null);
-        holdElement = createAppendSet("span", holdElement, null);
-        holdElement = createAppendSet("button", holdElement, "btn btn-warning btn-sm")
-
-        text = document.createTextNode("Delete");
-        holdElement.appendChild(text);
-        holdElement.addEventListener("click", deleteButtons);
-
-        //
-        var arrayData = ["Fname:", "Lname:", "Age:"];
-        var j;
-        for (j = 0; j < arrayData.length; j++) {
-            holdElement = createAppendSet("span", document.getElementsByTagName("td")[i * 4], null);
-            text = document.createTextNode(arrayData[j]);
-            holdElement.appendChild(text);
-
-
-            var curHoladElement = createAppendSet("input", holdElement, "form-control")
-            curHoladElement.setAttribute("type", "text");
-
-        }
-
-        holdElement = createAppendSet("span", document.getElementsByTagName("td")[i * 4], null);
-        holdElement = createAppendSet("button", holdElement, "btn-success btn-sm");
-        holdElement.addEventListener("click", submitButton);
-        text = document.createTextNode("Submit");
-        holdElement.appendChild(text);
-        var x;
-        var currArray = array[i];
-        for (x in currArray) {
-            holdElement = createAppendSet("td", document.getElementsByTagName("tr")[i + 1], null);
-            text = document.createTextNode(currArray[x]);
-            holdElement.appendChild(text);
-        }
+        createDataRows(arrayData[i]);
     }
 }
 
-function createAppendSet(create, append, set) {
-    var createdElement = document.createElement(create);
-    append.appendChild(createdElement);
-    if (set != null) {
-        createdElement.setAttribute("class", set);
+//this function populate the fields with data
+function createDataRows(arrayData) {
+    //add delete button
+    var holdElement = createRow(document.getElementsByTagName("tbody")[0]);
+    holdElement = createTableData(holdElement);
+    holdElement = createButton(holdElement, "btn btn-warning btn-sm");
+    text = document.createTextNode("Delete");
+    holdElement.appendChild(text);
+    holdElement.addEventListener("click", deleteButtons);
+
+    //fill data from JSON
+    var currArray = arrayData;
+    var x;
+    for (x in currArray) {
+        holdElement = createTableData(document.getElementsByTagName("tr")[document.getElementsByTagName("tr").length - 1]);
+        var text = document.createTextNode(currArray[x]);
+        holdElement.appendChild(text);
     }
-    return createdElement;
 }
 
-function submitButton() {
+//add new row to the table with data from to the form input
+function addButton() {
+    event.preventDefault()
     var array = [];
-    //get to span element.
-    var input = this.parentNode.previousSibling;
-    var i = 0;
-    while (i < 3) {
-        array.push(input.childNodes[1].value);
-        input = input.previousSibling;
-        i++;
+    var i;
+    var inputArray = document.getElementsByClassName("form-control");
+    for (i = 0; i < inputArray.length; i++) {
+        array.push(inputArray[i].value);
     }
-
-    var output = this.parentNode.parentNode.nextSibling;
-    var i = 2;
-    while (i >= 0) {
-        output.innerHTML = array[i];
-        output = output.nextSibling;
-        i--;
-    }
+    createDataRows(array);
 }
 
+//delete row.
 function deleteButtons() {
-    var tdElement = this.parentNode.parentNode.nextSibling;
-    while (tdElement != null) {
-        tdElement.innerHTML = "";
-        tdElement = tdElement.nextSibling;
-    }
+    var tbodyParent = this.parentNode.parentNode.parentNode;
+    var rowChild = this.parentNode.parentNode;
+    tbodyParent.removeChild(rowChild);
+
 }
+
+
+//all the rest of the function are for creating elements.
+function createDiv(appendElement, setClass) {
+    var createElement = document.createElement("div");
+    appendElement.appendChild(createElement);
+    if (setClass != null) {
+        createElement.setAttribute("class", setClass);
+    }
+    return createElement;
+}
+
+function createTable(newElement, appendElement, setClass) {
+    var createElement = document.createElement(newElement);
+    appendElement.appendChild(createElement);
+    if (setClass != null) {
+        createElement.setAttribute("class", setClass);
+    }
+    return createElement;
+}
+
+function createRow(appendElement) {
+    var createElement = document.createElement("tr");
+    appendElement.appendChild(createElement);
+    return createElement;
+}
+
+function createTableData(appendElement) {
+    var createElement = document.createElement("td");
+    appendElement.appendChild(createElement);
+    return createElement;
+}
+
+function createTableHeader(appendElement) {
+    var createElement = document.createElement("th");
+    appendElement.appendChild(createElement);
+    return createElement;
+}
+function createButton(appendElement, setClass) {
+    var createElement = document.createElement("button");
+    appendElement.appendChild(createElement);
+    if (setClass != null) {
+        createElement.setAttribute("class", setClass);
+    }
+    return createElement;
+}
+
+function createForm(appendElement, setClass) {
+    var createElement = document.createElement("form");
+    appendElement.appendChild(createElement);
+    if (setClass != null) {
+        createElement.setAttribute("class", setClass);
+    }
+    return createElement;
+}
+
+function createLabel(appendElement, setClass) {
+    var createElement = document.createElement("lable");
+    appendElement.appendChild(createElement);
+    if (setClass != null) {
+        createElement.setAttribute("class", setClass);
+    }
+    return createElement;
+}
+
+function createInput(appendElement, setType, setClass) {
+    var createElement = document.createElement("input");
+    appendElement.appendChild(createElement);
+    if (setType != null) {
+        createElement.setAttribute("type", setType);
+    }
+    if (setClass != null) {
+        createElement.setAttribute("class", setClass);
+    }
+    return createElement;
+}
+
+
+
 
 
 
