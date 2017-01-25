@@ -74,7 +74,7 @@ function createDataRows(arrayData) {
     }
 }
 
-//add new row to the table with data from to the form input
+//add new row with data from to the table
 function addButton() {
     event.preventDefault()
     var array = [];
@@ -83,7 +83,9 @@ function addButton() {
     for (i = 0; i < inputArray.length; i++) {
         array.push(inputArray[i].value);
     }
+
     createDataRows(array);
+
 }
 
 //delete row.
@@ -150,7 +152,7 @@ function createForm(appendElement, setClass) {
 }
 
 function createLabel(appendElement, setClass) {
-    var createElement = document.createElement("lable");
+    var createElement = document.createElement("label");
     appendElement.appendChild(createElement);
     if (setClass != null) {
         createElement.setAttribute("class", setClass);
